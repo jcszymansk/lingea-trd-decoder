@@ -279,6 +279,7 @@ if OUTSTYLE == 0:
            'on':('('  ,')' ),  #Header origin note
            'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
            'dv':('{'  ,'} '),  #Header dataVariant
+           'pv':('/'  ,'/ '),  #Header plural variant
            'sa':('`'  ,'`' ),  #Data sample
            'sw':(''   ,''),    #Data sample wordclass; is no printed by Lingea (it is printed only in French?)
            'do':('`'  ,'`' ),  #Data origin note
@@ -303,6 +304,7 @@ if OUTSTYLE == 1:
            'on':('('       ,')\\n' ), #Header origin note
            'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
            'dv':('{'       ,'} '),    #Header dataVariant
+           'pv':('/'       ,'/\\n'),  #Header plural variant
            'sa':('    '    ,'\\n' ),  #Data sample
            'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    '    ,' ' ),    #Data origin note
@@ -327,6 +329,7 @@ if OUTSTYLE == 2:
            'on':('<span color="blue">('                              ,')</span>\\n' ),  #Header origin note
            'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
            'dv':('{'                                                 ,'} '),            #Header dataVariant
+           'pv':('/'                                                 ,'/\\n'),          #Header plural variant
            'sa':('    <span color="darkred" weight="bold">'          ,'</span>\\n' ),   #Data sample
            'sw':(''                                                  ,''),              #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    <span color="darkred" weight="bold">'          ,'</span> ' ),     #Data origin note
@@ -536,6 +539,8 @@ def decode(stream):
         headerFlag = outInt("Header dataFlag: %s") # Blocks in header
         if headerFlag & 0x02:
             result += tag['dv'][0] + outStr("Header dataVariant: %s")+ tag['dv'][1]
+        if headerFlag & 0x40:
+            result += tag['pv'][0] + outStr("Plural variant: %s") + tag['pv'][1] #???????????????
 
     # ??? Link elsewhere
     pass
@@ -546,8 +551,11 @@ def decode(stream):
        outInt("Sound reference byte #2: %s")
        outInt("Sound reference byte #3: %s")
        outInt("Sound reference byte #4: %s")
-       outInt("Sound reference byte #5: %s")
-       #out("Sound data reference (5 bytes)", 6)
+       if outInt("Sound reference continue: %s") & 0x80:
+          outInt("Sound reference byte #5: %s")
+          outInt("Sound reference byte #6: %s")
+          outInt("Sound reference byte #7: %s")
+          outInt("Sound reference byte #8: %s")
 
     # TODO: Test all mainFlags in header!!!!
 
