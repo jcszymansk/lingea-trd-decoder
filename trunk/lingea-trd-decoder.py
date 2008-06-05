@@ -12,6 +12,7 @@
 # http://hp.vector.co.jp/authors/VA005784/cobuild/cobuildconv.html
 #
 # Version history:
+# 0.3 (28.10.2007) Patch by Petr Dlouhy, cleanup, bugfix. More dictionaries.
 # 0.2 (19.7.2007) Changes, documentation, first 100% dictionary
 # 0.1 (20.5.2006) Initial version based on Nomad specs
 #
@@ -20,6 +21,8 @@
 # - Lingea Anglický Kapesní slovník
 #
 # Modified by:
+# - Petr Dlouhy (petr.dlouhy|email.cz)
+# Generalization of data block rules, sampleFlag 0x04, sound out fix, data phrase prefix with comment (0x04)
 # <write your name here>
 #
 # This library is free software; you can redistribute it and/or
@@ -38,7 +41,7 @@
 # Boston, MA 02111-1307, USA.
 
 # VERSION
-VERSION = "0.2"
+VERSION = "0.3"
 
 # DEBUGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 DEBUG = False
@@ -331,7 +334,12 @@ def decode(stream):
 
     # SOUND DATA REFERENCE
     if mainFlag & 0x80:
-        out("Sound data reference (5 bytes)", 5)
+       outInt("Sound reference byte #1: %s")
+       outInt("Sound reference byte #2: %s")
+       outInt("Sound reference byte #3: %s")
+       outInt("Sound reference byte #4: %s")
+       outInt("Sound reference byte #5: %s")
+       #out("Sound data reference (5 bytes)", 6)
 
     # TODO: Test all mainFlags in header!!!!
 
@@ -346,23 +354,19 @@ def decode(stream):
         dataFlag = outInt("DataFlag: %s -----------------------------")
         if dataFlag & 0x01: # small index
             sampleFlag = outInt("Data sampleFlag: %s")
-            if sampleFlag == 0x01:
+            if sampleFlag & 0x01:
                 item += '`' + outStr("Data sample: %s")+'` ' 
-            if sampleFlag == 0x08:
+            if sampleFlag & 0x04:
+                outInt("Data sample: %s")
+            if sampleFlag & 0x08:
                 result += outStr("Data sample wordclass: %s") + '\\n'
-            if sampleFlag == 0x10:
+            if sampleFlag & 0x10:
                 outInt("Data sample Int: %s")
                 outInt("Data sample Int: %s")
                 outInt("Data sample Int: %s")
-            if sampleFlag == 0x20:
+            if sampleFlag & 0x20:
                 item += '`' + outStr("Data origin note: %s")+'` ' 
-            if sampleFlag == 0x21:
-                item += '`' + outStr("Data sample: %s")+'` ' 
-                item += '`' + outStr("Data origin note: %s")+'` ' 
-            if sampleFlag == 0x80:
-                result += '[' + pronunciation_encode(outStr("Data sample pronunciation: %s")) + '] '
-            if sampleFlag == 0x88:
-                result += outStr("Data sample wordclass: %s") + '\\n'
+            if sampleFlag & 0x80:
                 result += '[' + pronunciation_encode(outStr("Data sample pronunciation: %s")) + '] '
         if dataFlag & 0x02:
             subFlag = outInt("Data subFlag: %s")
@@ -379,86 +383,31 @@ def decode(stream):
             pass # ???
         if dataFlag & 0x20: # phrase
             phraseFlag1 = outInt("Data phraseFlag1: %s")
-            if phraseFlag1 == 0x01:
-                item += outStr("Data phrase short form: %s")+ ' '
-            if phraseFlag1 == 0x02:
+            if phraseFlag1 & 0x01:
+                item += '"' + outStr("Data phrase short form: %s") + '" '
+            if phraseFlag1 & 0x02:
                 phraseCount = outInt("Data phraseCount: %s")
                 for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
+                    phraseComment = outInt("Data phrase prefix")
                     item += '"'+outStr("Data phrase 1: %s")+' = ' 
+                    if phraseComment & 0x04:
+                        item += outStr("Data phrase comment: %s") 
                     item += outStr("Data phrase 2: %s")+'" ' 
-            if phraseFlag1 == 0x03:
-                    item += '"'+outStr("Data phrase short form 1: %s")+'" ' 
-                    phraseCount = outInt("Data phraseCount: %s")
-                    for i in range(0, phraseCount):
-                        outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                        item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                        item += outStr("Data phrase 2: %s")+'" ' 
-            if phraseFlag1 == 0x04:
+            if phraseFlag1 & 0x04:
                 phraseCount = outInt("Data phraseCount: %s")
                 for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
+                    phraseComment = outInt("Data phrase prefix")
                     item += '"'+outStr("Data phrase 1: %s")+' = ' 
+                    if phraseComment & 0x04:
+                        item += outStr("Data phrase comment: %s") 
                     item += outStr("Data phrase 2: %s")+'" ' 
-            if phraseFlag1 == 0x05: # short form
-                item += outStr("Data phrase short form: %s")+ ' '
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-            if phraseFlag1 == 0x06:
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-            if phraseFlag1 == 0x08:
+            if phraseFlag1 & 0x08:
                 phraseCount = outInt("Data simple phraseCount: %s")
                 for i in range(0, phraseCount):
                     item += '"'+outStr("Data simple phrase: %s")+' = ' 
-            if phraseFlag1 == 0x0A:
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-                outInt("Data phrase note, always 0x01?") # ? Always 0x01?
-                item += '"'+outStr("Data phrase note: %s")+' = ' 
-            if phraseFlag1 == 0x0C:
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-                outInt("Data phrase note, always 0x01?") # ? Always 0x01?
-                item += '"'+outStr("Data phrase note: %s")+' = ' 
-            if phraseFlag1 == 0x40:
-                item += outStr("Data phrase short form: %s")+ ' '
-            if phraseFlag1 == 0x41:
-                item += outStr("Data phrase short form: %s")+ ' '
-                item += outStr("Data phrase short form: %s")+ ' '
-            if phraseFlag1 == 0x42:
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
-                item += outStr("Data phrase short form: %s")+ ' '
-            if phraseFlag1 == 0x44:
-                phraseCount = outInt("Data phraseCount: %s")
-                for i in range(0, phraseCount):
-                    outInt("Data phrase prefix, always 0x00?") # ? Always 0x00?
-                    item += '"'+outStr("Data phrase 1: %s")+' = ' 
-                    item += outStr("Data phrase 2: %s")+'" ' 
+            if phraseFlag1 & 0x40:
                 item += outStr("Data phrase short form: %s")+ ' '
 
-            # TODO: generalize rules for decoding (but now simply list all posiibilities)
             # TODO: be careful in changing the rules, to have back compatibility! 
         if dataFlag & 0x40: # reference, related language
             #0x01 synonym ?
