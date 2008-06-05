@@ -93,7 +93,6 @@ OUTSTYLE = 2
 DEBUGHEADER = False
 DEBUGALL = False
 DEBUGLIMIT = 1
-ENCODING = 0
 for o, a in opts:
    if o in ("-d", "-debug"):
       # DEBUGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -255,8 +254,8 @@ def decode_alpha_postprocessing( input ):
     # UPCASE, UPCASE_PRON, SYMBOL, SPECIAL
     skip = False
     for i in range(0,len(input)-1):
-        if skip:
-            skip = False
+        if skip > 0:
+            skip -= 1
             continue
 
         bc = input[i]
@@ -264,13 +263,25 @@ def decode_alpha_postprocessing( input ):
         bc1 = input[i+1]
         c1 = alpha[bc1]
         if c[0] == '#':
+           skip = 1
            if c in subs:
               if c in ("#UPCASE#", "#SPECIAL#", "#SYMBOL#"):
                  result += subs[c][bc1]
+              elif c in ("#PRON#"):
+                 bc2 = input[i+2]
+                 c2 = alpha[bc2]
+                 cc = c1 + c2
+                 if cc in subs[c]:
+                    result += subs[c][cc]
+                 else:
+                    result += c + cc # debug
+                 skip = 2
+              elif c1 in subs[c]:
+                 result += subs[c][c1]
               else:
-                 if c1 in subs[c]:
-                    result += subs[c][c1]
-           skip = True
+                 result += c + c1 # debug
+           else:
+              result += c # debug
         else:
            result += c
 
@@ -599,7 +610,7 @@ else:
        '#AL30#','#AL31#', ' ', '.', '<', '>', ',', ';', '-', '#AL39#',
        '#GRAVE#', '#ACUTE#', '#CIRC#', '#TILDE#', '#UML#', '#AL45#', '#AL46#', '#CARON#', '#AL48#', '#CEDIL#',
        'Ƌ', '#SHARP#', '#GREEK#', '#AL53#', '#AL54#', '#AL55#', '#AL56#', '#AL57#', 's', '#SYMBOL#', # symbol 58 is used in Spanish word pillo as s (seimpre)
-       '#AL60#', '#UPCASE#', '#SPECIAL#', '#UNICODE#'] # 4 bytes after unicode
+       '#PRON#', '#UPCASE#', '#SPECIAL#', '#UNICODE#'] # 4 bytes after unicode
 
    upcase = ['#UP0#','#UP1#','#UP2#','#UP3#','#UP4#','#UP5#','#UP6#','#UP7#','#UP8#','#UP9#',
        '#UP10#','#UP11#','#UP12#','#UP13#','#UP14#','#UP15#','#UP16#','#UP17#','#UP18#','#UP19#',
@@ -726,6 +737,18 @@ subs = {
            '<': 'Ç'
            # 'j': '?' # what the hell is this one
            # '#UML#': '?' # what the hell is this one (used in word Jesús)
+       },
+       "#PRON#": {
+           'el': 'ɛ',
+           'ou': 'ɶ',
+           'or': 'ɸ',
+           '#CEDIL#c': 'ʀ',
+           'hi': 'ɥ',
+           'nh': 'ɲ',
+           'ex': 'ɛ̃', 
+           'cv': 'ɔ̃',
+           'ov': 'œ̃',
+           'av': 'ɑ̃'
        },
        "#UPCASE#": upcase,
        "#SYMBOL#": symbol,
