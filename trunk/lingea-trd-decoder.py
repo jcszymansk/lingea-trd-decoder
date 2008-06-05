@@ -295,7 +295,9 @@ def pronunciation_encode(s):
 
 re_d = re.compile(r'<d(.*?)>')
 re_w = re.compile(r'<w(.*?)>')
+re_x = re.compile(r'<x(.*?)>')
 re_y = re.compile(r'<y(.*?)>')
+re_z = re.compile(r'<z(.*?)>')
 re_c = re.compile(r'<c(.*?)>')
 
 def decode_tag_postprocessing(input):
@@ -310,8 +312,12 @@ def decode_tag_postprocessing(input):
         s = re_d.sub(r'(\1)',s)
         # ?? <w...>
         s = re_w.sub(r'(\1)',s)
+        # ?? <x...>
+        s = re_x.sub(r'(\1)',s)
         # ?? <y...>
         s = re_y.sub(r'(\1)',s)
+        # ?? <z...>
+        s = re_z.sub(r'(\1)',s)
         # ?? <c...>
         s = re_c.sub(r'(\1)',s)
         # ...
@@ -320,8 +326,12 @@ def decode_tag_postprocessing(input):
         s = re_d.sub(r'(\1)',s)
         # ?? <w...>
         s = re_w.sub(r'(\1)',s)
+        # ?? <x...>
+        s = re_x.sub(r'(\1)',s)
         # ?? <y...>
         s = re_y.sub(r'(\1)',s)
+        # ?? <z...>
+        s = re_z.sub(r'(\1)',s)
         # ?? <c...>
         s = re_c.sub(r'(\1)',s)
         # ...
@@ -330,8 +340,12 @@ def decode_tag_postprocessing(input):
         s = re_d.sub(r'<span size="small" color="blue">(\1)</span>',s)
         # ?? <w...>
         s = re_w.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        # ?? <x...>
+        s = re_x.sub(r'<span size="small" color="brown" style="italic">\1</span>',s)
         # ?? <y...>
         s = re_y.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        # ?? <z...>
+        s = re_z.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
         # ?? <c...>
         s = re_c.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
         # ...
