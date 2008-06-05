@@ -1,0 +1,7 @@
+#!/bin/sh
+for i in `find slovníky -name *.trd`; do
+	name=`echo $i | sed "s/.*\\///" | sed "s/\\.trd$//"`
+	echo "converting $i"
+	./lingea-trd-decoder.py $i > converted/$name.htm
+done
+
