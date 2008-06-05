@@ -12,6 +12,7 @@
 # http://hp.vector.co.jp/authors/VA005784/cobuild/cobuildconv.html
 #
 # Version history:
+# 0.6 (29.5.2008) Patch by Petr Dlouhy, added support for French-Czech and Spanish-Czech dictionaries; automatic encoding selection; all unrecognized characters are printed now as #something# (note: some of them are bugs in Lingea dictionaries); typo
 # 0.5 (3.12.2007) Patch by Petr Dlouhy, iPaq and 2000 dicts support
 #                 Patch by Josef Riha 
 # 0.4 (30.10.2007) Patch by Petr Dlouhy, optional HTML generation
@@ -53,7 +54,7 @@
 # Boston, MA 02111-1307, USA.
 
 # VERSION
-VERSION = "0.5"
+VERSION = "0.6"
 
 import getopt, sys
 def usage():
