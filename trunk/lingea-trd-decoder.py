@@ -63,17 +63,17 @@ def usage():
    print "Copyright (C) 2007 - Klokan Petr Pridal, Petr Dlouhy"
    print
    print "Usage: python lingea-trd-decoder.py DICTIONARY.trd > DICTIONARY.tab"
-   print "Result convertion by stardict-tools: /usr/lib/stardict-tools/tabfile"
+   print "Result conversion by stardict-tools: /usr/lib/stardict-tools/tabfile"
    print
    print "    -o <num>      --out-style        : Output style"
    print "                                          0   no tags"
    print "                                          1   \\n tags"
    print "                                          2   html tags"
    print "    -h            --help             : Print this message"
-   print "    -d            --debug            : Degub"
-   print "    -r            --debug-header     : Degub - print headers"
-   print "    -a            --debug-all        : Degub - print all records"
-   print "    -l            --debug-limit      : Degub limit"
+   print "    -d            --debug            : Debug"
+   print "    -r            --debug-header     : Debug - print headers"
+   print "    -a            --debug-all        : Debug - print all records"
+   print "    -l            --debug-limit      : Debug limit"
    print "    -e            --encoding         : Encoding variant (0 or 1)"
    print
    print "For HTML support in StarDict dictionary .ifo has to contain:"
@@ -270,22 +270,22 @@ subs = {
 
 if OUTSTYLE == 0:
     tag = {
-           'db':(''   ,''),    #Data begining
+           'db':(''   ,''),    #Data beginning
            'rn':(''   ,'\t'),  #Record name
            'va':(''   ,' '),   #Header variant
            'wc':('('  ,')'),   #WordClass
            'pa':(''   ,' '),   #Header parts
            'fo':('('  ,') '),  #Header forms
            'on':('('  ,')' ),  #Header origin note
-           'pr':('['  ,']'),   #Header pronunciation
+           'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
            'dv':('{'  ,'} '),  #Header dataVariant
            'sa':('`'  ,'`' ),  #Data sample
-           'sw':(''   ,''),    #Data sample wordclass; is no printed by Lingea
+           'sw':(''   ,''),    #Data sample wordclass; is no printed by Lingea (it is printed only in French?)
            'do':('`'  ,'`' ),  #Data origin note
            'df':(''   ,' '),   #Data definition
            'ps':('"'  ,'" '),  #Data phrase short form
            'pg':('"'  ,' = '), #Data phrase green
-           'pc':('`'  ,'`'),   #Data phrase comment; this comment is not printed by Lingea), but it seems useful
+           'pc':('`'  ,'`'),   #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('"'  ,' = '), #Data phrase 1
            'p2':(''   ,'" ' ), #Data phrase 2
            'sp':('"'  ,' = ' ),#Data simple phrase
@@ -294,22 +294,22 @@ if OUTSTYLE == 0:
            }
 if OUTSTYLE == 1:
     tag = {
-           'db':('•'       ,''),      #Data begining
+           'db':('•'       ,''),      #Data beginning
            'rn':(''        ,'\t'),    #Record name
            'va':(''        ,' '),     #Header variant
            'wc':(''        ,'\\n'),   #WordClass
            'pa':(''        ,':\\n'),  #Header parts
            'fo':('('       ,') '),    #Header forms
            'on':('('       ,')\\n' ), #Header origin note
-           'pr':('['       ,']\\n'),  #Header pronunciation
+           'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
            'dv':('{'       ,'} '),    #Header dataVariant
            'sa':('    '    ,'\\n' ),  #Data sample
-           'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea
+           'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    '    ,' ' ),    #Data origin note
            'df':('    '    ,'\\n'),   #Data definition
            'ps':('    '    ,'\\n'),   #Data phrase short form
            'pg':('    '    ,' '),     #Data phrase green
-           'pc':('    '    ,' '),     #Data phrase comment; this comment is not printed by Lingea), but it seems useful
+           'pc':('    '    ,' '),     #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('    '    ,' '),     #Data phrase 1
            'p2':('      '  ,'\\n' ),  #Data phrase 2
            'sp':('    '    ,'\\n' ),  #Data simple phrase
@@ -318,22 +318,22 @@ if OUTSTYLE == 1:
           }
 if OUTSTYLE == 2:
     tag = {
-           'db':('•'                                                 ,''),              #Data begining
+           'db':('•'                                                 ,''),              #Data beginning
            'rn':(''                                                  ,'\t'),            #Record name
            'va':(''                                                  ,' '),             #Header variant
            'wc':('<span size="larger" color="darkred" weight="bold">','</span>\\n'),    #WordClass
            'pa':('<span size="larger" color="darkred" weight="bold">',':</span>\\n'),   #Header parts
            'fo':('('                                                 ,') '),            #Header forms
            'on':('<span color="blue">('                              ,')</span>\\n' ),  #Header origin note
-           'pr':('['                                                 ,']\\n'),          #Header pronunciation
+           'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
            'dv':('{'                                                 ,'} '),            #Header dataVariant
            'sa':('    <span color="darkred" weight="bold">'          ,'</span>\\n' ),   #Data sample
-           'sw':(''                                                  ,''),              #Data sample wordclass; is not printed by Lingea
+           'sw':(''                                                  ,''),              #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    <span color="darkred" weight="bold">'          ,'</span> ' ),     #Data origin note
            'df':('    <span weight="bold">'                          ,'</span>\\n'),    #Data definition
            'ps':('    <span color="dimgray" weight="bold">'          ,'</span>\\n'),    #Data phrase short form
            'pg':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase green
-           'pc':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase comment; this comment is not printed by Lingea), but it seems useful
+           'pc':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('    <span color="dimgray" style="italic">'         ,'</span> '),      #Data phrase 1
            'p2':('      '                                            ,'\\n' ),          #Data phrase 2
            'sp':('    <span color="cyan">'                           ,'</span>\\n' ),   #Data simple phrase
@@ -358,7 +358,7 @@ def getRec(n):
         return ''
 
 def decode_alpha( stream, nullstop=True):
-    """Decode 6-bit encoding data stream from the begining untit first NULL"""
+    """Decode 6-bit encoding data stream from the beginning until first NULL"""
     offset = 0
     triple = 0
     result = []
@@ -423,7 +423,7 @@ re_y = re.compile(r'<y(.*?)>')
 re_c = re.compile(r'<c(.*?)>')
 
 def decode_tag_postprocessing(input):
-    """Decode and replace tags used in lingea dictionaries; decode internal tags"""
+    """Decode and replace tags used in Lingea dictionaries; decode internal tags"""
     s = input
 
     # General information in http://www.david-zbiral.cz/El-slovniky-plnaverze.htm#_Toc151656799
