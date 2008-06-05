@@ -12,6 +12,8 @@
 # http://hp.vector.co.jp/authors/VA005784/cobuild/cobuildconv.html
 #
 # Version history:
+# 0.5 (3.12.2007) Patch by Petr Dlouhy, iPaq and 2000 dicts support
+#                 Patch by Josef Riha 
 # 0.4 (30.10.2007) Patch by Petr Dlouhy, optional HTML generation
 # 0.3 (28.10.2007) Patch by Petr Dlouhy, cleanup, bugfix. More dictionaries.
 # 0.2 (19.7.2007) Changes, documentation, first 100% dictionary
@@ -20,12 +22,18 @@
 # Supported dictionaries:
 # - Lingea Německý Kapesní slovník
 # - Lingea Anglický Kapesní slovník
-# - Lingea 2002 series (theoretically)
+# - Lingea 2002 series (theoretically all of them)
+# - Lingea 2000 series (theoretically all of them)
+# - Lingea Pocket series
 #
 # Modified by:
 # - Petr Dlouhy (petr.dlouhy | email.cz)
 # Generalization of data block rules, sampleFlag 0x04, sound out fix, data phrase prefix with comment (0x04)
 # HTML output, debugging patch, options on command line
+# Decoding for 2000 and Pocket series.
+#
+# - Ing. Josef Riha ( jose1711 | gmail.com )
+# Slovak letters support 
 #
 # <write your name here>
 #
@@ -66,6 +74,7 @@ def usage():
    print "    -r            --debug-header     : Degub - print headers"
    print "    -a            --debug-all        : Degub - print all records"
    print "    -l            --debug-limit      : Degub limit"
+   print "    -e            --encoding         : Encoding variant (0 or 1)"
    print
    print "For HTML support in StarDict dictionary .ifo has to contain:"
    print "sametypesequence=g"
@@ -73,7 +82,7 @@ def usage():
    print
 
 try:
-   opts, args = getopt.getopt(sys.argv[1:], "hdo:ral:", ["help", "debug", "out-style=", "debug-header", "debug-all", "debug-limit="])
+	opts, args = getopt.getopt(sys.argv[1:], "hdo:ral:e:", ["help", "debug", "out-style=", "debug-header", "debug-all", "debug-limit=", "encoding="])
 except getopt.GetoptError:
    usage()
    print "ERROR: Bad option"
@@ -85,6 +94,7 @@ OUTSTYLE = 2
 DEBUGHEADER = False
 DEBUGALL = False
 DEBUGLIMIT = 1
+ENCODING = 0
 for o, a in opts:
    if o in ("-d", "-debug"):
       # DEBUGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -95,6 +105,7 @@ for o, a in opts:
       if OUTSTYLE > 2:
          usage()
          print "ERROR: Output style not specified"
+         sys.exit(2)
    if o in ("-r", "--debug-header"):
       # If DEBUG and DEBUGHEADER, then print just all header records
       DEBUGHEADER = True
@@ -107,6 +118,13 @@ for o, a in opts:
    if o in ("-l", "--debug-limit"):
       # Number of wrong records for printing to stop during debugging 
       DEBUGLIMIT = locale.atoi(a)
+   if o in ("-e", "--encoding"):
+      # Number of wrong records for printing to stop during debugging 
+      ENCODING = locale.atoi(a)
+      if ENCODING > 1:
+         usage()
+         print "ERROR: Unknown encoding"
+         sys.exit(2)
 # FILENAME is a first parameter on the commandline now
 
 if len(args) == 1:
@@ -119,21 +137,39 @@ else:
 from struct import *
 import re
 
-alpha = ['\x00', 'a','b','c','d','e','f','g','h','i',
-    'j','k','l','m','n','o','p','q','r','s',
-    't','u','v','w','x','y','z','#AL27#','#AL28#','#AL29#',
-    '#AL30#','#AL31#', ' ', '.', '<', '>', ',', ';', '-', '#AL39#',
-        '#GRAVE#', '#ACUTE#', '#CIRC#', '#TILDE#', '#UML#', '#AL45#', '#AL46#', '#CARON#', '#AL48#', '#CEDIL#',
-        '#AL50#', '#AL51#', '#GREEK#', '#AL53#', '#AL54#', '#AL55#', '#AL56#', '#AL57#', '#AL58#', '#SYMBOL#',
-        '#AL60#', '#UPCASE#', '#SPECIAL#', '#UNICODE#'] # 4 bytes after unicode
+if ENCODING == 0:
+	alpha = ['\x00', 'a','b','c','d','e','f','g','h','i',
+		 'j','k','l','m','n','o','p','q','r','s',
+		 't','u','v','w','x','y','z','#AL27#','#AL28#','#AL29#',
+		 '#AL30#','#AL31#', ' ', '.', '<', '>', ',', ';', '-', '#AL39#',
+			  '#GRAVE#', '#ACUTE#', '#CIRC#', '#TILDE#', '#UML#', '#AL45#', '#AL46#', '#CARON#', '#AL48#', '#CEDIL#',
+			  '#AL50#', '#SHARP#', '#GREEK#', '#AL53#', '#AL54#', '#AL55#', '#AL56#', '#AL57#', '#AL58#', '#SYMBOL#',
+			  '#AL60#', '#UPCASE#', '#SPECIAL#', '#UNICODE#'] # 4 bytes after unicode
 
-upcase = ['#UP0#','#UP1#','#UP2#','#UP3#','#UP4#','#UP5#','#UP6#','#UP7#','#UP8#','#UP9#',
-    '#UP10#','#UP11#','#UP12#','#UP13#','#UP14#','#UP15#','#UP16#','#UP17#','#UP18#','#UP19#',
-    '#UP20#','#UP21#','#UP22#','#UP23#','#UP24#','#UP25#','#UP26#','#UP27#','#UP28#','#UP29#',
-    '#UP30#','#UP31#','A','B','C','D','E','F','G','H',
-    'I','J','K','L','M','N','O','P','Q','R',
-    'S','T','U','V','W','X','Y','Z','#UP58#','#UP59#',
-    '#UP60#','#UP61#','#UP62#','#UP63#']
+	upcase = ['#UP0#','#UP1#','#UP2#','#UP3#','#UP4#','#UP5#','#UP6#','#UP7#','#UP8#','#UP9#',
+		 '#UP10#','#UP11#','#UP12#','#UP13#','#UP14#','#UP15#','#UP16#','#UP17#','#UP18#','#UP19#',
+		 '#UP20#','#UP21#','#UP22#','#UP23#','#UP24#','#UP25#','#UP26#','#UP27#','#UP28#','#UP29#',
+		 '#UP30#','#UP31#','A','B','C','D','E','F','G','H',
+		 'I','J','K','L','M','N','O','P','Q','R',
+		 'S','T','U','V','W','X','Y','Z','#UP58#','#UP59#',
+		 '#UP60#','#UP61#','#UP62#','#UP63#']
+
+if ENCODING == 1:
+	alpha = ['\x00', 'a','b','c','d','e','f','g','h','i',
+		'j','k','l','m','n','o','p','q','r','s',
+		't','u','v','w','x','y','z','á','#AL28#','č',
+		'ď','é', 'ě', 'í', '#34#', '#35#', 'ň', 'ó', '#AL38#', '#AL39#',
+		'ř', 'š', 'ť', 'ú', 'ů', 'ü', 'ý', 'ž', '#AL48#', ' ',
+		'.', ',', '-', '\'', '(', ')', '`', '"', '#AL58#', '#UP59#',
+		'#UPCASE#', 'à', '#SPECIAL#', "#AL1234213"] # 4 bytes after unicode
+
+	upcase = ['\x00', 'A','B','C','D','E','F','G','H','I',
+		'J','K','L','M','N','O','P','Q','R','S',
+		'T','U','V','W','X','Y','Z','Á','#UP28#','Č',
+		'Ď','É', 'Ě', 'Í', '<', '>', 'Ň', 'Ó', '-', '#UP39#',
+		'Ř', 'Š', 'Ť', 'Ú', 'Ů', 'Ü', 'Ý', 'Ž', '#UP48#', ' ',
+		'#UP.#', '#UP,#', '#UP-#', '#UP\'#', '#UP(#', '#UP)#', '#UP`#', '#UP"#', '#UP58#', '#UP59#',
+		'#~UPCASE#', 'À', '#UP/#'] # 4 bytes after unicode
 
 upcase_pron = ['#pr0#', '#pr1#','#pr2#','#pr3#','#pr4#','#pr5#','#pr6#','#pr7#','#pr8#','#pr9#',
     '#pr10#', '#pr11#','#pr12#','#pr13#','#pr14#','#pr15#','#pr16#','#pr17#','#pr18#','#pr19#',
@@ -159,10 +195,78 @@ special = ['#SP0#', '!','"','#','$','%','&','\'','(',')',
     '#SP50#', '#SP51#','#SP52#','#SP53#','#SP54#','#SP55#','#SP56#','#SP57#','#SP58#','#SP59#',
     '#SP60#', '#SP61#','#SP62#','#SP63#']
 
-wordclass = ('#0#','n:','adj:','pron:','#4#','v:','adv:','prep:','#8#','#9#',
+wordclass = ('#0#','n:','adj:','pron:','num:','v:','adv:','prep:','conj:','#9#',
     'intr:','phr:','#12#','#13#','#14#','#15#','#16#','#17#','#18#','#19#',
     '#20#','#21#','#22#','#23#','#24#','#25#','#26#','#27#','#28#','#29#',
     '#30#','#31#')
+
+
+subs = {
+       "#GRAVE#" : {
+          'a': 'à',
+          'e': 'è',
+          'u': 'û'
+       },
+       "#UML#" : {
+           'o': 'ö',
+           'u': 'ü',
+           'a': 'ä',
+           'e': 'ë',
+           'i': 'ï',
+           ' ': 'Ä',
+           '#AL46#': 'Ö',
+           '#GREEK#': 'Ü'
+       },
+       "#ACUTE#" : {
+           'a': 'á',
+           'e': 'é',
+           'i': 'í',
+           'o': 'ó',
+           'u': 'ú',
+           'y': 'ý',
+           ' ': 'Á',
+           '#GRAVE#':'Í',
+           '#GREEK#':'Ú'
+       },
+       "#CARON#" : {
+           'r': 'ř',
+           'c': 'č',
+           's': 'š',
+           'z': 'ž',
+           'e': 'ě',
+           'd': 'ď',
+           't': 'ť',
+           'a': 'å',
+           'u': 'ů',
+           'n': 'ň',
+           '<': 'Č',
+           '>': 'Ď',
+           '#CEDIL#': 'Ř',
+           '#SHARP#': 'Ť',
+           '#AL45#': 'Ň',
+           '#AL50#': 'Š',
+           '#AL57#': 'Ž'
+       },
+       "#SHARP#": {
+           's': 'ß'
+       },
+        "#TILDE#": {
+           'n': 'ñ'
+       },
+       "#CIRC#": {
+           'a': 'â',
+           'e': 'ê',
+           'o': 'ô',
+           'i': 'î',
+           'u': 'û'
+       },
+       "#CEDIL#": {
+           'c': 'ç'
+       },
+       "#UPCASE#": upcase,
+       "#SYMBOL#": symbol,
+       "#SPECIAL#": special,
+     }
 
 if OUTSTYLE == 0:
     tag = {
@@ -208,7 +312,7 @@ if OUTSTYLE == 1:
            'pc':('    '    ,' '),     #Data phrase comment; this comment is not printed by Lingea), but it seems useful
            'p1':('    '    ,' '),     #Data phrase 1
            'p2':('      '  ,'\\n' ),  #Data phrase 2
-           'sp':(''        ,'\\n' ),  #Data simple phrase
+           'sp':('    '    ,'\\n' ),  #Data simple phrase
            'b1':('"'       ,' = '),   #Data phrase (block) 1
            'b2':('" '      ,''),      #Data phrase (block) 2
           }
@@ -232,7 +336,7 @@ if OUTSTYLE == 2:
            'pc':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase comment; this comment is not printed by Lingea), but it seems useful
            'p1':('    <span color="dimgray" style="italic">'         ,'</span> '),      #Data phrase 1
            'p2':('      '                                            ,'\\n' ),          #Data phrase 2
-           'sp':('<span color="cyan">'                               ,'</span>\\n' ),   #Data simple phrase
+           'sp':('    <span color="cyan">'                           ,'</span>\\n' ),   #Data simple phrase
            'b1':('"'                                                 ,' = '),           #Data phrase (block) 1
            'b2':('" '                                                ,''),              #Data phrase (block) 2
           }
@@ -294,65 +398,17 @@ def decode_alpha_postprocessing( input ):
         c = alpha[bc]
         bc1 = input[i+1]
         c1 = alpha[bc1]
-
-        if bc < 40:
-            result += c
+        if c[0] == '#':
+           if c in subs:
+              if c in ("#UPCASE#", "#SPECIAL#", "#SYMBOL#"):
+                 result += subs[c][bc1]
+              else:
+                 if c1 in subs[c]:
+                    result += subs[c][c1]
+           skip = True
         else:
-            if c == "#GRAVE#":
-                if   c1 == 'a': result += 'à'
-                else: result += '#GRAVE%s#' % c1
-            elif c == "#UML#":
-                if   c1 == 'o': result += 'ö'
-                elif c1 == 'u': result += 'ü'
-                elif c1 == 'a': result += 'ä'
-                elif c1 == ' ': result += 'Ä'
-                elif c1 == '#AL46#': result += 'Ö'
-                elif c1 == '#GREEK#': result += 'Ü'
-                else: result += '#UML%s#' % c1
-            elif c == "#ACUTE#":
-                if   c1 == 'a': result += 'á'
-                elif c1 == 'e': result += 'é'
-                elif c1 == 'i': result += 'í'
-                elif c1 == 'o': result += 'ó'
-                elif c1 == 'u': result += 'ú'
-                elif c1 == 'y': result += 'ý'
-                elif c1 == ' ': result += 'Á'
-                elif c1 == '#GRAVE#': result += 'Í'
-                else: result += '#ACUTE%s#' % c1
-            elif c == "#CARON#":
-                if   c1 == 'r': result += 'ř'
-                elif c1 == 'c': result += 'č'
-                elif c1 == 's': result += 'š'
-                elif c1 == 'z': result += 'ž'
-                elif c1 == 'e': result += 'ě'
-                elif c1 == 'd': result += 'ď'
-                elif c1 == 't': result += 'ť'
-                elif c1 == 'a': result += 'å'
-                elif c1 == 'u': result += 'ů'
-                elif c1 == 'n': result += 'ň'
-                elif c1 == '<': result += 'Č'
-                elif c1 == '#CEDIL#': result += 'Ř'
-                elif c1 == '#AL50#': result += 'Š'
-                elif c1 == '#AL57#': result += 'Ž'
-                else: result += '#CARON%s#' % c1
-            elif c == "#UPCASE#":
-                result += upcase[bc1]
-            elif c == "#SYMBOL#":
-                result += symbol[bc1]
-            elif c == "#AL51#":
-                if c1 == 's': result += 'ß'
-            elif c == "#AL48#":
-                result += "#AL48#%s" % c1
-            elif c == "#SPECIAL#":
-                result += special[bc1]
-            elif c == "#UNICODE#":
-                result += '#UNICODE%s#' % bc1
-            elif c == "#CIRC#":
-                if   c1 == 'a': result += 'â'
-                else: result += '#CARON%s#' % c1
-            else:
-                result += '%sX%s#' % (c[:-1], bc1)
-            skip = True
+           result += c
+
     return result
 
 def pronunciation_encode(s):
@@ -418,26 +474,27 @@ def toBin( b ):
     return "0x%02X(%08d)%03d" % (original, r, original)
 
 
-def out( comment = "", skip = False):
-    """Read next byte or string (with skip=True) and output DEBUG info"""
+def outInt( comment = "" ):
+    """Read next byte and output DEBUG info"""
     global bs, pos
+
+    if DEBUG: print "%03d %s %s | %03d" % (pos, toBin(bs[pos]),comment, pos)
+    if (comment.find('%') != -1):
+         comment = comment % bs[pos]
+    pos += 1
+    return bs[pos-1]
+
+def outStr( comment = "" ):
+    """Read next string and output DEBUG info"""
+    global bs, pos
+
     s, triple  = decode_alpha(bs[pos:])
     s = s.split('\x00')[0] # give me string until first NULL
     if (comment.find('%') != -1):
-        if skip:
-            comment = comment % s
-        else:
-            comment = comment % bs[pos]
-    if DEBUG: print "%03d %s %s | %s | %03d" % (pos, toBin(bs[pos]),comment, s, (triple + pos))
-    if skip:
-        pos += triple + 1
-        return s.replace('`','') # Remove '`' character from words
-    else:
-        pos += 1
-        return bs[pos-1]
-
-outInt = lambda c: out(c)
-outStr = lambda c: out(c, True)
+        comment = comment % s
+    if DEBUG: print "%03d %s %s | %s" % (pos, toBin(bs[pos]),comment, s)
+    pos += triple + 1
+    return s.replace('`','') # Remove '`' character from words
 
 def decode(stream):
     """Decode byte stream of one record, return decoded string with formatting in utf"""
@@ -568,8 +625,9 @@ def decode(stream):
             if phraseFlag1 & 0x08:
                 phraseCount = outInt("Data simple phraseCount: %s")
                 for i in range(0, phraseCount):
-                    item += "    "
                     item += tag['sp'][0] + outStr("Data simple phrase: %s") +  tag['sp'][1]
+            if phraseFlag1 & 0x10:
+                item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
             if phraseFlag1 & 0x40:
                 item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
 
@@ -617,7 +675,7 @@ def decode(stream):
 
     ok = True
     while pos < len(stream):
-        ok = (out() == 0x00) and ok
+        ok = (outInt() == 0x00) and ok
 
     if ok:
         result += '\n'
