@@ -507,7 +507,9 @@ def decode(stream):
         if dataFlag & 0x08: # reference
             item += tag['df'][0] + outStr("Data definition: %s") + tag['df'][1]
         if dataFlag & 0x10: # note???
-            outInt("noteFlag: %s");
+            noteFlag = outInt("Data noteFlag: %s");
+            if noteFlag & 0x08:
+                outInt("Data note ???: %s");
             item += tag['nt'][0] + outStr("Data note: %s") + tag['nt'][1]
         if dataFlag & 0x20: # phrase
             phraseFlag1 = outInt("Data phraseFlag1: %s")
