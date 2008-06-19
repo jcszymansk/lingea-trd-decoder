@@ -473,6 +473,8 @@ def decode(stream):
             sampleFlag = outInt("Data sampleFlag: %s")
             if sampleFlag & 0x01:
                 result += tag['sa'][0] + outStr("Data sample: %s") +  tag['sa'][1]
+            if sampleFlag & 0x02:
+                result += tag['sa'][0] + outStr("Data sample variant: %s") +  tag['sa'][1]
             if sampleFlag & 0x04:
                s = outInt("Data wordclass: %s")
                if s != lastWordClass: 
