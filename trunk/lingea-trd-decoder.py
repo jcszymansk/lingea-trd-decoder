@@ -572,11 +572,13 @@ def decode(stream):
             if noteFlag & 0x01:
                 item += tag['nt'][0] + outStr("Data note 0x01: %s") + tag['nt'][1]
             if noteFlag & 0x02:
-                outInt("Data note 0x02: %s");
-                item += tag['nt'][0] + outStr("Data note 0x02: %s") + tag['nt'][1]
+                noteCount = outInt("Data noteCount: %s")
+                for i in range(0, noteCount):
+                   item += tag['nt'][0] + outStr("Data note 0x02: %s") + tag['nt'][1]
             if noteFlag & 0x08:
-                outInt("Data note 0x08: %s");
-                item += tag['nt'][0] + outStr("Data note 0x08: %s") + tag['nt'][1]
+                noteCount = outInt("Data noteCount: %s")
+                for i in range(0, noteCount):
+                   item += tag['nt'][0] + outStr("Data note 0x08: %s") + tag['nt'][1]
             if noteFlag & 0x40:
                 item += tag['nt'][0] + outStr("Data note 0x40: %s") + tag['nt'][1]
         if dataFlag & 0x20: # phrase
