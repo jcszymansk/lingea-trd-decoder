@@ -140,6 +140,7 @@ if OUTSTYLE == 0:
            'fo':('('  ,') '),  #Header forms
            'on':('('  ,')' ),  #Header origin note
            'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
+           'du':('('  ,')'),   #Data sub example
            'dv':('{'  ,'} '),  #Header dataVariant
            'pv':('/'  ,'/ '),  #Header plural variant
            'ex':('('  ,') '),  #Header example
@@ -167,6 +168,7 @@ if OUTSTYLE == 1:
            'fo':('('       ,') '),    #Header forms
            'on':('('       ,')\\n' ), #Header origin note
            'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
+           'du':('('       ,')'),     #Data sub example
            'dv':('{'       ,'} '),    #Header dataVariant
            'pv':('/'       ,'/\\n'),  #Header plural variant
            'ex':('('       ,')\\n'),    #Header example
@@ -194,6 +196,7 @@ if OUTSTYLE == 2:
            'fo':('('                                                 ,') '),            #Header forms
            'on':('<span color="blue">('                              ,')</span>\\n' ),  #Header origin note
            'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
+           'du':('('                                                 ,')'),             #Data sub example
            'dv':('{'                                                 ,'} '),            #Header dataVariant
            'pv':('/'                                                 ,'/\\n'),          #Header plural variant
            'ex':('('                                                 ,')\\n'),          #Header example
@@ -474,7 +477,7 @@ def decode(stream):
             if sampleFlag & 0x01:
                 result += tag['sa'][0] + outStr("Data sample: %s") +  tag['sa'][1]
             if sampleFlag & 0x02:
-                result += tag['sa'][0] + outStr("Data sample variant: %s") +  tag['sa'][1]
+                result += tag['sa'][0] + outStr("Data sample variant: %s") +  tag['sa'][1] #???????????????????
             if sampleFlag & 0x04:
                s = outInt("Data wordclass: %s")
                if s != lastWordClass: 
@@ -497,7 +500,9 @@ def decode(stream):
         if dataFlag & 0x02:
             item += "    "
             subFlag = outInt("Data subFlag: %s")
-            if subFlag == 0x80:
+            if subFlag & 0x08:
+                item += tag['du'][0] + outStr("Data sub example: %s") + tag['du'][1]
+            if subFlag & 0x80:
                 outStr("Data sub prefix: %s")
                 # It seams that data sub prefix content is ignored and there is a generated number for the whole block instead.
                 li += 1
