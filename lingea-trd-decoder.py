@@ -147,6 +147,7 @@ if OUTSTYLE == 0:
            'sw':(''   ,''),    #Data sample wordclass; is no printed by Lingea (it is printed only in French?)
            'do':('`'  ,'`' ),  #Data origin note
            'df':(''   ,' '),   #Data definition
+           'nt':(''   ,' '),   #Data note
            'ps':('"'  ,'" '),  #Data phrase short form
            'pg':('"'  ,' = '), #Data phrase green
            'pc':('`'  ,'`'),   #Data phrase comment; this comment is not printed by Lingea, but it seems useful
@@ -173,6 +174,7 @@ if OUTSTYLE == 1:
            'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    '    ,' ' ),    #Data origin note
            'df':('    '    ,'\\n'),   #Data definition
+           'nt':('    '    ,'\\n'),   #Data note
            'ps':('    '    ,'\\n'),   #Data phrase short form
            'pg':('    '    ,' '),     #Data phrase green
            'pc':('    '    ,' '),     #Data phrase comment; this comment is not printed by Lingea, but it seems useful
@@ -199,6 +201,7 @@ if OUTSTYLE == 2:
            'sw':(''                                                  ,''),              #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    <span color="darkred" weight="bold">'          ,'</span> ' ),     #Data origin note
            'df':('    <span weight="bold">'                          ,'</span>\\n'),    #Data definition
+           'nt':(''                                                  ,''),              #Data note
            'ps':('    <span color="dimgray" weight="bold">'          ,'</span>\\n'),    #Data phrase short form
            'pg':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase green
            'pc':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase comment; this comment is not printed by Lingea, but it seems useful
@@ -501,8 +504,9 @@ def decode(stream):
             pass # ???
         if dataFlag & 0x08: # reference
             item += tag['df'][0] + outStr("Data definition: %s") + tag['df'][1]
-        if dataFlag & 0x10:
-            pass # ???
+        if dataFlag & 0x10: # note???
+            outInt("noteFlag: %s");
+            item += tag['nt'][0] + outStr("Data note: %s") + tag['nt'][1]
         if dataFlag & 0x20: # phrase
             phraseFlag1 = outInt("Data phraseFlag1: %s")
             if phraseFlag1 & 0x01:
