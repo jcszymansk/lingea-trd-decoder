@@ -560,9 +560,16 @@ def decode(stream):
             item += tag['df'][0] + outStr("Data definition: %s") + tag['df'][1]
         if dataFlag & 0x10: # note???
             noteFlag = outInt("Data noteFlag: %s");
+            if noteFlag & 0x01:
+                item += tag['nt'][0] + outStr("Data note 0x01: %s") + tag['nt'][1]
+            if noteFlag & 0x02:
+                outInt("Data note 0x02: %s");
+                item += tag['nt'][0] + outStr("Data note 0x02: %s") + tag['nt'][1]
             if noteFlag & 0x08:
-                outInt("Data note ???: %s");
-            item += tag['nt'][0] + outStr("Data note: %s") + tag['nt'][1]
+                outInt("Data note 0x08: %s");
+                item += tag['nt'][0] + outStr("Data note 0x08: %s") + tag['nt'][1]
+            if noteFlag & 0x40:
+                item += tag['nt'][0] + outStr("Data note 0x40: %s") + tag['nt'][1]
         if dataFlag & 0x20: # phrase
             phraseFlag1 = outInt("Data phraseFlag1: %s")
             if phraseFlag1 & 0x01:
