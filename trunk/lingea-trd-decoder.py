@@ -82,7 +82,7 @@ def usage():
    print
 
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hdo:ral:e:", ["help", "debug", "out-style=", "debug-header", "debug-all", "debug-limit="])
+   opts, args = getopt.getopt(sys.argv[1:], "hdo:ral:e:", ["help", "debug", "out-style=", "debug-header", "debug-all", "debug-limit="])
 except getopt.GetoptError:
    usage()
    print "ERROR: Bad option"
@@ -180,7 +180,7 @@ if OUTSTYLE == 1:
            'dv':('{'       ,'} '),    #Header dataVariant
            'sh':(''        ,'\\n'),   #Header shortcut
            'pv':('/'       ,'/\\n'),  #Header plural variant
-           'ex':('('       ,')\\n'),    #Header example
+           'ex':('('       ,')\\n'),  #Header example
            'sa':('    '    ,'\\n' ),  #Data sample
            'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    '    ,' ' ),    #Data origin note
@@ -483,7 +483,7 @@ def decode(stream):
     
     # Header data block
     if mainFlag & 0x02:
-        headerFlag = outInt("Header dataFlag: %s") # Blocks in header
+        headerFlag = outInt("Header headerFlag: %s") # Blocks in header
         if headerFlag & 0x01:
             result += tag['hs'][0] + outStr("Header source: %s")+ tag['hs'][1]
         if headerFlag & 0x02:
@@ -525,7 +525,7 @@ def decode(stream):
     for i in range(0, itemCount):
         item = tag['db'][0] + tag['db'][1]
         ol = False
-        dataFlag = outInt("DataFlag: %s -----------------------------")
+        dataFlag = outInt("DataFlag #%i: %%s -----------------------------" % i)
         if dataFlag & 0x01: # small index
             sampleFlag = outInt("Data sampleFlag: %s")
             if sampleFlag & 0x01:
