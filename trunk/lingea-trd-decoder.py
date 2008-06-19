@@ -157,6 +157,9 @@ if OUTSTYLE == 0:
            'pc':('`'  ,'`'),   #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('"'  ,' = '), #Data phrase 1
            'p2':(''   ,'" ' ), #Data phrase 2
+           'rs':('SYNONYM: ' ,'' ), #Reference synonym
+           'rr':('HYPERNYM: ','' ), #Reference hypernym
+           'rp':('HYPONYM: ' ,'' ), #Reference hyponym
            'sp':('"'  ,' = ' ),#Data simple phrase
            'b1':('"'  ,' = '), #Data phrase (block) 1
            'b2':('" ' ,''),    #Data phrase (block) 2
@@ -188,6 +191,9 @@ if OUTSTYLE == 1:
            'pc':('    '    ,' '),     #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('    '    ,' '),     #Data phrase 1
            'p2':('      '  ,'\\n' ),  #Data phrase 2
+           'rs':('SYNONYM: ' ,'\\n' ),#Reference synonym
+           'rr':('HYPERNYM: ','\\n' ),#Reference hypernym
+           'rp':('HYPONYM: ' ,'\\n' ),#Reference hyponym
            'sp':('    '    ,'\\n' ),  #Data simple phrase
            'b1':('"'       ,' = '),   #Data phrase (block) 1
            'b2':('" '      ,''),      #Data phrase (block) 2
@@ -219,6 +225,9 @@ if OUTSTYLE == 2:
            'pc':('    <span color="darkgreen" style="italic">'       ,'</span> '),      #Data phrase comment; this comment is not printed by Lingea, but it seems useful
            'p1':('    <span color="dimgray" style="italic">'         ,'</span> '),      #Data phrase 1
            'p2':('      '                                            ,'\\n' ),          #Data phrase 2
+           'rs':('SYNONYM: '                                         ,'\\n' ),          #Reference synonym
+           'rr':('HYPERNYM: '                                        ,'\\n' ),          #Reference hypernym
+           'rp':('HYPONYM: '                                         ,'\\n' ),          #Reference hyponym
            'sp':('    <span color="cyan">'                           ,'</span>\\n' ),   #Data simple phrase
            'b1':('"'                                                 ,' = '),           #Data phrase (block) 1
            'b2':('" '                                                ,''),              #Data phrase (block) 2
@@ -602,9 +611,14 @@ def decode(stream):
 
             # TODO: be careful in changing the rules, to have back compatibility! 
         if dataFlag & 0x40: # reference, related language
-            #0x01 synonym ?
+            referenceFlag = outInt("Data referenceFlag: %s")
+            if referenceFlag & 0x01:
+                item += tag['rs'][0] + outStr("Reference synonym: %s") + tag['rs'][1]
+            if referenceFlag & 0x04: # lg_en-wn
+                item += tag['rr'][0] + outStr("Reference hypernym: %s") + tag['rr'][1]
+            if referenceFlag & 0x08: # lg_en-wn
+                item += tag['rp'][0] + outStr("Reference hyponym: %s") + tag['rp'][1]
             #0x02 antonym ?
-            pass
         if dataFlag & 0x80: # Phrase block
             flags = [
             out("Data phrase block: %s"),
