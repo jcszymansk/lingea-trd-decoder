@@ -141,6 +141,7 @@ if OUTSTYLE == 0:
            'on':('('  ,')' ),  #Header origin note
            'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
            'du':('('  ,')'),   #Data sub example
+           'hs':('('  ,') '),  #Header source
            'dv':('{'  ,'} '),  #Header dataVariant
            'pv':('/'  ,'/ '),  #Header plural variant
            'ex':('('  ,') '),  #Header example
@@ -169,6 +170,7 @@ if OUTSTYLE == 1:
            'on':('('       ,')\\n' ), #Header origin note
            'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
            'du':('('       ,')'),     #Data sub example
+           'hs':('('       ,')\\n'),  #Header source
            'dv':('{'       ,'} '),    #Header dataVariant
            'pv':('/'       ,'/\\n'),  #Header plural variant
            'ex':('('       ,')\\n'),    #Header example
@@ -197,6 +199,7 @@ if OUTSTYLE == 2:
            'on':('<span color="blue">('                              ,')</span>\\n' ),  #Header origin note
            'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
            'du':('('                                                 ,')'),             #Data sub example
+           'hs':('('                                                 ,')\\n'),          #Header source
            'dv':('{'                                                 ,'} '),            #Header dataVariant
            'pv':('/'                                                 ,'/\\n'),          #Header plural variant
            'ex':('('                                                 ,')\\n'),          #Header example
@@ -466,6 +469,8 @@ def decode(stream):
     # Header data block
     if mainFlag & 0x02:
         headerFlag = outInt("Header dataFlag: %s") # Blocks in header
+        if headerFlag & 0x01:
+            result += tag['hs'][0] + outStr("Header source: %s")+ tag['hs'][1]
         if headerFlag & 0x02:
             result += tag['dv'][0] + outStr("Header dataVariant: %s")+ tag['dv'][1]
         if headerFlag & 0x08:
