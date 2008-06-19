@@ -143,6 +143,7 @@ if OUTSTYLE == 0:
            'du':('('  ,')'),   #Data sub example
            'hs':('('  ,') '),  #Header source
            'dv':('{'  ,'} '),  #Header dataVariant
+           'sh':(''   ,''),    #Header shortcut
            'pv':('/'  ,'/ '),  #Header plural variant
            'ex':('('  ,') '),  #Header example
            'sa':('`'  ,'`' ),  #Data sample
@@ -172,6 +173,7 @@ if OUTSTYLE == 1:
            'du':('('       ,')'),     #Data sub example
            'hs':('('       ,')\\n'),  #Header source
            'dv':('{'       ,'} '),    #Header dataVariant
+           'sh':(''        ,'\\n'),   #Header shortcut
            'pv':('/'       ,'/\\n'),  #Header plural variant
            'ex':('('       ,')\\n'),    #Header example
            'sa':('    '    ,'\\n' ),  #Data sample
@@ -201,6 +203,7 @@ if OUTSTYLE == 2:
            'du':('('                                                 ,')'),             #Data sub example
            'hs':('('                                                 ,')\\n'),          #Header source
            'dv':('{'                                                 ,'} '),            #Header dataVariant
+           'sh':(''                                                  ,'\\n'),           #Header shortcut
            'pv':('/'                                                 ,'/\\n'),          #Header plural variant
            'ex':('('                                                 ,')\\n'),          #Header example
            'sa':('    <span color="darkred" weight="bold">'          ,'</span>\\n' ),   #Data sample
@@ -475,8 +478,10 @@ def decode(stream):
             result += tag['dv'][0] + outStr("Header dataVariant: %s")+ tag['dv'][1]
         if headerFlag & 0x08:
             result += tag['ex'][0] + outStr("Example: %s") + tag['ex'][1]
+        if headerFlag & 0x10:
+            result += tag['sh'][0] + outStr("Header shortcut: %s") + tag['sh'][1]
         if headerFlag & 0x40:
-            result += tag['pv'][0] + outStr("Plural variant: %s") + tag['pv'][1] #???????????????
+            result += tag['pv'][0] + outStr("Plural variant: %s") + tag['pv'][1]
 
     # ??? Link elsewhere
     pass
