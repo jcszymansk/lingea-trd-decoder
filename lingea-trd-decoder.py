@@ -303,12 +303,32 @@ def pronunciation_encode(s):
         s = s.replace(upcase[i], upcase_pron[i])
     return s
 
+re_a = re.compile(r'<a(.*?)>') 
+re_c = re.compile(r'<c(.*?)>')
 re_d = re.compile(r'<d(.*?)>')
+re_e = re.compile(r'<e(.*?)>')
+re_E = re.compile(r'<E(.*?)>')
+re_f = re.compile(r'<f(.*?)>')
+re_g = re.compile(r'<g(.*?)>') #language
+re_h = re.compile(r'<h(.*?)>')
+re_i = re.compile(r'<i(.*?)>') 
+re_I = re.compile(r'<I(.*?)>') 
+re_l = re.compile(r'<l(.*?)>') 
+re_L = re.compile(r'<L(.*?)>') 
+re_n = re.compile(r'<n(.*?)>') 
+re_N = re.compile(r'<N(.*?)>') 
+re_o = re.compile(r'<o(.*?)>') 
+re_p = re.compile(r'<p(.*?)>') 
+re_q = re.compile(r'<q(.*?)>') 
+re_r = re.compile(r'<r(.*?)>') 
+re_t = re.compile(r'<t(.*?)>') 
+re_u = re.compile(r'<u(.*?)>') 
+re_v = re.compile(r'<v(.*?)>') 
 re_w = re.compile(r'<w(.*?)>')
 re_x = re.compile(r'<x(.*?)>')
 re_y = re.compile(r'<y(.*?)>')
 re_z = re.compile(r'<z(.*?)>')
-re_c = re.compile(r'<c(.*?)>')
+re__ = re.compile(r'<\^(.*?)>')
 
 def decode_tag_postprocessing(input):
     """Decode and replace tags used in Lingea dictionaries; decode internal tags"""
@@ -317,48 +337,60 @@ def decode_tag_postprocessing(input):
     # General information in http://www.david-zbiral.cz/El-slovniky-plnaverze.htm#_Toc151656799
     # TODO: Better output handling
 
-    if OUTSTYLE == 0:
-        # ?? <d...> 
-        s = re_d.sub(r'(\1)',s)
-        # ?? <w...>
-        s = re_w.sub(r'(\1)',s)
-        # ?? <x...>
-        s = re_x.sub(r'(\1)',s)
-        # ?? <y...>
-        s = re_y.sub(r'(\1)',s)
-        # ?? <z...>
-        s = re_z.sub(r'(\1)',s)
-        # ?? <c...>
+    if (OUTSTYLE == 0) or (OUTSTYLE == 1):
+        s = re_a.sub(r'(\1)',s)
         s = re_c.sub(r'(\1)',s)
-        # ...
-    if OUTSTYLE == 1:
-        # ?? <d...> 
         s = re_d.sub(r'(\1)',s)
-        # ?? <w...>
+        s = re_e.sub(r'(\1)',s)
+        s = re_E.sub(r'(\1)',s)
+        s = re_f.sub(r'(\1)',s)
+        s = re_g.sub(r'(\1)',s)
+        s = re_h.sub(r'(\1)',s)
+        s = re_i.sub(r'(\1)',s)
+        s = re_I.sub(r'(\1)',s)
+        s = re_l.sub(r'(\1)',s)
+        s = re_L.sub(r'(\1)',s)
+        s = re_n.sub(r'(\1)',s)
+        s = re_N.sub(r'(\1)',s)
+        s = re_o.sub(r'(\1)',s)
+        s = re_p.sub(r'(\1)',s)
+        s = re_q.sub(r'(\1)',s)
+        s = re_r.sub(r'(\1)',s)
+        s = re_t.sub(r'(\1)',s)
+        s = re_u.sub(r'(\1)',s)
+        s = re_v.sub(r'(\1)',s)
         s = re_w.sub(r'(\1)',s)
-        # ?? <x...>
         s = re_x.sub(r'(\1)',s)
-        # ?? <y...>
         s = re_y.sub(r'(\1)',s)
-        # ?? <z...>
         s = re_z.sub(r'(\1)',s)
-        # ?? <c...>
-        s = re_c.sub(r'(\1)',s)
-        # ...
+        s = re__.sub(r'(\1)',s)
     if OUTSTYLE == 2:
-        # ?? <d...> 
-        s = re_d.sub(r'<span size="small" color="blue">(\1)</span>',s)
-        # ?? <w...>
-        s = re_w.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
-        # ?? <x...>
-        s = re_x.sub(r'<span size="small" color="brown" style="italic">\1</span>',s)
-        # ?? <y...>
-        s = re_y.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
-        # ?? <z...>
-        s = re_z.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
-        # ?? <c...>
+        s = re_a.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
         s = re_c.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
-        # ...
+        s = re_d.sub(r'<span size="small" color="blue">(\1)</span>',s)
+        s = re_e.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_E.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_f.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_g.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_h.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_i.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_I.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_l.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_L.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_n.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_N.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_o.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_p.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_q.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_r.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_t.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_u.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_v.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_w.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_x.sub(r'<span size="small" color="brown" style="italic">\1</span>',s)
+        s = re_y.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re_z.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
+        s = re__.sub(r'<span size="small" color="blue" style="italic">\1</span>',s)
 
     return s
 
@@ -477,7 +509,7 @@ def decode(stream):
             if sampleFlag & 0x01:
                 result += tag['sa'][0] + outStr("Data sample: %s") +  tag['sa'][1]
             if sampleFlag & 0x02:
-                result += tag['sa'][0] + outStr("Data sample variant: %s") +  tag['sa'][1] #???????????????????
+                result += tag['sa'][0] + outStr("Data sample variant: %s") +  tag['sa'][1]
             if sampleFlag & 0x04:
                s = outInt("Data wordclass: %s")
                if s != lastWordClass: 
