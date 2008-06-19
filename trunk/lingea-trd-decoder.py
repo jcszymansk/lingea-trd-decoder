@@ -663,8 +663,9 @@ def decode(stream):
             result += item
 
     ok = True
-    while pos < len(stream):
-        ok = (outInt() == 0x00) and ok
+    if (len(stream) != 13752) and (len(stream) != 21988) and (len(stream) != 16204) and (len(stream) != 12656): #hack to workaround bug in some dicts (lg_czen-eco, lg_encz-ind, lg_czgr-eco, lg_grsk-2)
+       while pos < len(stream):
+           ok = (outInt() == 0x00) and ok
 
     if ok:
         result += '\n'
