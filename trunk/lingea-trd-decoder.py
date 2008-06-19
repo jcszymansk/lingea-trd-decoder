@@ -141,6 +141,7 @@ if OUTSTYLE == 0:
            'on':('('  ,')' ),  #Header origin note
            'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
            'du':('('  ,')'),   #Data sub example
+           'dc':('('  ,')'),   #Data sub shortcut
            'hs':('('  ,') '),  #Header source
            'dv':('{'  ,'} '),  #Header dataVariant
            'sh':(''   ,''),    #Header shortcut
@@ -171,6 +172,7 @@ if OUTSTYLE == 1:
            'on':('('       ,')\\n' ), #Header origin note
            'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
            'du':('('       ,')'),     #Data sub example
+           'dc':('('       ,')'),     #Data sub shortcut
            'hs':('('       ,')\\n'),  #Header source
            'dv':('{'       ,'} '),    #Header dataVariant
            'sh':(''        ,'\\n'),   #Header shortcut
@@ -201,6 +203,7 @@ if OUTSTYLE == 2:
            'on':('<span color="blue">('                              ,')</span>\\n' ),  #Header origin note
            'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
            'du':('('                                                 ,')'),             #Data sub example
+           'dc':('('                                                 ,')'),             #Data sub shortcut
            'hs':('('                                                 ,')\\n'),          #Header source
            'dv':('{'                                                 ,'} '),            #Header dataVariant
            'sh':(''                                                  ,'\\n'),           #Header shortcut
@@ -544,6 +547,8 @@ def decode(stream):
             subFlag = outInt("Data subFlag: %s")
             if subFlag & 0x08:
                 item += tag['du'][0] + outStr("Data sub example: %s") + tag['du'][1]
+            if subFlag & 0x10:
+                item += tag['dc'][0] + outStr("Data sub shortcut: %s") + tag['dc'][1]
             if subFlag & 0x80:
                 outStr("Data sub prefix: %s")
                 # It seams that data sub prefix content is ignored and there is a generated number for the whole block instead.
