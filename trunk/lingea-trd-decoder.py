@@ -606,7 +606,12 @@ def decode(stream):
                 for i in range(0, phraseCount):
                     item += tag['sp'][0] + outStr("Data simple phrase: %s") +  tag['sp'][1]
             if phraseFlag1 & 0x10:
-                item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
+                if smallIndex: # different behaviour in small and big dictionaries
+                   item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
+                else:
+                   phraseCount = outInt("Data phraseCount: %s")
+                   for i in range(0, phraseCount):
+                      item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
             if phraseFlag1 & 0x40:
                 item += tag['ps'][0] + outStr("Data phrase short form: %s") + tag['ps'][1]
 
