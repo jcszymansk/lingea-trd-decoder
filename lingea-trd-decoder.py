@@ -142,6 +142,7 @@ if OUTSTYLE == 0:
            'pr':('['  ,']'),   #Header pronunciation; not printed by Lingea
            'dv':('{'  ,'} '),  #Header dataVariant
            'pv':('/'  ,'/ '),  #Header plural variant
+           'ex':('('  ,') '),  #Header example
            'sa':('`'  ,'`' ),  #Data sample
            'sw':(''   ,''),    #Data sample wordclass; is no printed by Lingea (it is printed only in French?)
            'do':('`'  ,'`' ),  #Data origin note
@@ -167,6 +168,7 @@ if OUTSTYLE == 1:
            'pr':('['       ,']\\n'),  #Header pronunciation; not printed by Lingea
            'dv':('{'       ,'} '),    #Header dataVariant
            'pv':('/'       ,'/\\n'),  #Header plural variant
+           'ex':('('       ,')\\n'),    #Header example
            'sa':('    '    ,'\\n' ),  #Data sample
            'sw':(''        ,''),      #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    '    ,' ' ),    #Data origin note
@@ -192,6 +194,7 @@ if OUTSTYLE == 2:
            'pr':('['                                                 ,']\\n'),          #Header pronunciation; not printed by Lingea
            'dv':('{'                                                 ,'} '),            #Header dataVariant
            'pv':('/'                                                 ,'/\\n'),          #Header plural variant
+           'ex':('('                                                 ,')\\n'),          #Header example
            'sa':('    <span color="darkred" weight="bold">'          ,'</span>\\n' ),   #Data sample
            'sw':(''                                                  ,''),              #Data sample wordclass; is not printed by Lingea (it is printed in only in French?)
            'do':('    <span color="darkred" weight="bold">'          ,'</span> ' ),     #Data origin note
@@ -427,6 +430,8 @@ def decode(stream):
         headerFlag = outInt("Header dataFlag: %s") # Blocks in header
         if headerFlag & 0x02:
             result += tag['dv'][0] + outStr("Header dataVariant: %s")+ tag['dv'][1]
+        if headerFlag & 0x08:
+            result += tag['ex'][0] + outStr("Example: %s") + tag['ex'][1]
         if headerFlag & 0x40:
             result += tag['pv'][0] + outStr("Plural variant: %s") + tag['pv'][1] #???????????????
 
