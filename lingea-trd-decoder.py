@@ -12,6 +12,7 @@
 # http://hp.vector.co.jp/authors/VA005784/cobuild/cobuildconv.html
 #
 # Version history:
+# 0.7 (19.6.2008) Patch by Petr Dlouhy, added support for many new dicts
 # 0.6 (29.5.2008) Patch by Petr Dlouhy, added support for French-Czech and Spanish-Czech dictionaries; automatic encoding selection; all unrecognized characters are printed now as #something# (note: some of them are bugs in Lingea dictionaries); typo
 # 0.5 (3.12.2007) Patch by Petr Dlouhy, iPaq and 2000 dicts support
 #                 Patch by Josef Riha 
@@ -26,6 +27,36 @@
 # - Lingea 2002 series (theoretically all of them)
 # - Lingea 2000 series (theoretically all of them)
 # - Lingea Pocket series
+#
+# Tested on this dicts:
+# lg_czen-eco.trd
+# lg_czen-ind.trd
+# lg_czen-law.trd
+# lg_czen-2.trd
+# lg_czgr-eco.trd
+# lg_czgr-1.trd
+# lg_encz-abc.trd
+# lg_encz-eco.trd
+# lg_encz-grm.trd
+# lg_encz-ind.trd
+# lg_encz-laa.trd
+# lg_encz-law.trd
+# lg_encz-2.trd
+# lg_en-rth.trd
+# lg_ensk-2.trd
+# lg_ensk-2_.trd
+# lg_en-wn.trd
+# lg_frcz-1f.trd
+# lg_grcz-eco.trd
+# lg_grcz-1.trd
+# lg_grsk-2.trd
+# lg_sken-2.trd
+# lg_sken-2_.trd
+# lg_skgr-2.trd
+# lg_spcz-1.trd
+# 00czus-1.trd
+# 00uscz-1.trd
+#
 #
 # Modified by:
 # - Petr Dlouhy (petr.dlouhy | email.cz)
@@ -54,7 +85,7 @@
 # Boston, MA 02111-1307, USA.
 
 # VERSION
-VERSION = "0.6"
+VERSION = "0.7"
 
 import getopt, sys
 def usage():
